@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { AirportService } from './airport.service';
 
 @Component({
   selector: 'app-home',
@@ -7,35 +7,56 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./airport.component.css']
 })
 export class HomeComponent {
-  airportsApi: string = "https://restcountries.com/v2/all";
+  updateAirport: boolean = false;
   airports: any;
-  constructor(private http: HttpClient,){}
-  airportId: any;
-  airportName: any;
+  constructor(private airportService: AirportService){}
+  // numericCode: any;
+  airportName:any;
   airportCode: any;
+  currentId: any;
+
   ngOnInit(): void{
-    this.getAirports();
+    this.fetchAllAirports()
   }
 
-  getAirports(){
-    this.http.get(this.airportsApi).subscribe((res) => {
-      this.airports = res;                         //Сохраняю данные по странам и пытаюсь вывести их
-      console.log(this.airports);
+  fetchAllAirports(){
+    this.airportService.getAirports().subscribe((res)=>{
+      this.airports = res;
     });
-
   }
 
   addAirport(){
     let newAirport = {
-      // "numericCode": thiairportId,
+      // "numericCode": this.numericCode,
       "name": this.airportName,
       "alpha3Code": this.airportCode
     }
-    this.http.post(this.airportsApi,newAirport).subscribe((res) => {
+    this.airportService.addNewAirport(newAirport).subscribe((res)=>{
+      this.fetchAllAirports();
       console.log(res);
-      alert('new airport added')
-      this.getAirports()
     })
   }
-
+  delete(name:any){
+    this.airportService.deleteAirport(name).subscribe((res)=>{
+      this.fetchAllAirports();
+    })
+  }
+  edit(airport:any){
+    this.updateAirport = true;
+    //  this.airports = airport.id
+     this.airportName = airport.name
+    this.airportCode = airport.alpha3Code
+  }
+  update(){
+    let updateAirport = {
+      // "numericCode": this.numericCode,
+      "name": this.airportName,
+      "alpha3Code": this.airportCode
+    }
+    
+    this.airportService.updateAirport(this.currentId,updateAirport).subscribe((res) => {
+      this.fetchAllAirports(); //Проверить, тут что-то намудрил
+    })
+    this.updateAirport = false
+  }
 }
