@@ -1,0 +1,16 @@
+<p>home works!!!</p>
+
+<!-- Airport Id: <input type="text" [(ngModel)]="airportId"><br><br> -->
+Airport name<input type="text" [(ngModel)]="airportName"><br><br>
+Airport code<input type="text" [(ngModel)]="airportCode">
+<button (click)="addAirport()">Add Country </button>
+<table border="1">
+    <tr>
+        <th>Country</th>
+        <th>Country code</th>
+    </tr>
+    <tr *ngFor="let airport of airports">
+        <td>{{airport.name}}</td>
+        <td>{{airport.alpha3Code}}</td>
+    </tr>
+</table>
